@@ -10,6 +10,39 @@ resource "kubernetes_config_map" "config" {
   }
 }
 
+resource "kubernetes_network_policy" "app_network_policy" {
+  metadata {
+    name = "application-traffic"
+  }
+  spec {
+    policy_types = ["Ingress", "Egress"]
+
+    pod_selector {
+      match_labels = {
+        app = "${kubernetes_deployment.deployment.spec[0].template[0].metadata[0].labels.app}"
+      }
+    }
+
+    ingress {
+        ports {
+          port = var.app_port
+          protocol = "TCP"
+        }
+
+        from {
+          namespace_selector {
+            match_labels = {
+              name = "default"
+            }
+          }
+        }
+    }
+
+    egress {} # single empty rule to allow all egress traffic
+
+  }
+}
+
 resource "kubernetes_service" "svc" {
   metadata {
     name = "hello-world-svc"
@@ -17,7 +50,7 @@ resource "kubernetes_service" "svc" {
   
   spec {
     selector = {
-      app = kubernetes_deployment.deployment.spec[0].template[0].metadata[0].labels.app
+      app = "${kubernetes_deployment.deployment.spec[0].template[0].metadata[0].labels.app}"
     }
 
     port {
@@ -25,7 +58,7 @@ resource "kubernetes_service" "svc" {
       target_port = var.app_port
     }
 
-    type = "LoadBalancer"
+    type = "NodePort"
   }  
 }
 
