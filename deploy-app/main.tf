@@ -94,6 +94,15 @@ resource "kubernetes_deployment" "deployment" {
           port {
 		    container_port = var.app_port
           }
+
+          resources {
+            limits {
+              memory = "200Mi"
+            }
+            requests {
+              memory = "100Mi"
+            }
+          }
           
           env_from {
             config_map_ref {
