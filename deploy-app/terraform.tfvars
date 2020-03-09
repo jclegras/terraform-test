@@ -1,3 +1,10 @@
 message  = "Hello, SRE implements Devops ..!!.."
 app_port = 8080
 docker_image = "legrajc/hello-world:1.0.3"
+limits_memory = "200Mi"
+limits_cpu = "0.5"
+requests_memory = "100Mi"
+requests_cpu = "0.3"
+pod_replicas = 3
+probe_header = "1234-test"
+endpoint_healthcheck = "/healthcheck"

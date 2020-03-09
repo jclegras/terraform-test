@@ -97,10 +97,12 @@ resource "kubernetes_deployment" "deployment" {
 
           resources {
             limits {
-              memory = "200Mi"
+              memory = var.limits_memory
+              cpu = var.limits_cpu
             }
             requests {
-              memory = "100Mi"
+              memory = var.requests_memory
+              cpu = var.requests_cpu
             }
           }
           
@@ -112,12 +114,12 @@ resource "kubernetes_deployment" "deployment" {
           
           liveness_probe {
             http_get {
-              path = "/healthcheck"
+              path = var.endpoint_healthcheck
               port = var.app_port
 
               http_header {
                 name  = "X-Probe"
-                value = "1234-test"
+                value = var.probe_header
               }
             }
             
